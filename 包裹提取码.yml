@@ -1,0 +1,309 @@
+app:
+  description: 从短信中提取包裹所在的门店以及提取码
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 包裹提取码
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/anthropic:0.0.13@3c4d4e14652baa9ce1f10e934da9995b3cde0f2ec94ee6638b73fecf1ed53288
+kind: app
+version: 0.3.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: parameter-extractor
+        targetType: end
+      id: 1735716740022-source-1743148133938-target
+      source: '1735716740022'
+      sourceHandle: source
+      target: '1743148133938'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: 1735716404472-source-1746344207889-target
+      source: '1735716404472'
+      sourceHandle: source
+      target: '1746344207889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1746344207889-source-1746344735975-target
+      source: '1746344207889'
+      sourceHandle: source
+      target: '1746344735975'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: parameter-extractor
+      id: 1746344735975-false-1735716740022-target
+      source: '1746344735975'
+      sourceHandle: 'false'
+      target: '1735716740022'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1746344735975-true-1746344765852-target
+      source: '1746344735975'
+      sourceHandle: 'true'
+      target: '1746344765852'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - label: input sms/输入你的短信
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: input_sms
+      height: 90
+      id: '1735716404472'
+      position:
+        x: 30
+        y: 263
+      positionAbsolute:
+        x: 30
+        y: 263
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        instruction: 请从"input_sms"中提取出「站点名称」并计入"site"及「取件码」并计入"pickupCode"。
+        model:
+          completion_params:
+            json_schema: "{\n  \"name\": \"input_sms\",\n  \"schema\": {\n    \"type\"\
+              : \"object\",\n    \"properties\": {\n      \"site\": {\n        \"\
+              type\": \"string\",\n        \"description\": \"The name of the site\
+              \ extracted from the SMS input.\"\n      },\n      \"pickupCode\": {\n\
+              \        \"type\": \"string\",\n        \"description\": \"The pickup\
+              \ code extracted from the SMS input.\"\n      }\n    },\n    \"required\"\
+              : [\n      \"site\",\n      \"pickupCode\"\n    ],\n    \"additionalProperties\"\
+              : false\n  },\n  \"strict\": true\n}"
+            max_tokens: 1201
+            response_format: JSON
+            temperature: 0.7
+          mode: chat
+          name: claude-3-5-haiku-20241022
+          provider: langgenius/anthropic/anthropic
+        parameters:
+        - description: 站点名称
+          name: site
+          required: true
+          type: string
+        - description: 取件码
+          name: pickupCode
+          required: true
+          type: string
+        query:
+        - '1735716404472'
+        - input_sms
+        reasoning_mode: prompt
+        selected: false
+        title: Parameter Extractor
+        type: parameter-extractor
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1735716740022'
+      position:
+        x: 934.8571428571429
+        y: 387.85714285714283
+      positionAbsolute:
+        x: 934.8571428571429
+        y: 387.85714285714283
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1735716740022'
+          - site
+          variable: site
+        - value_selector:
+          - '1735716740022'
+          - pickupCode
+          variable: pickupCode
+        selected: false
+        title: End
+        type: end
+      height: 116
+      id: '1743148133938'
+      position:
+        x: 1260.2857142857144
+        y: 387.85714285714283
+      positionAbsolute:
+        x: 1260.2857142857144
+        y: 387.85714285714283
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(input_sms: str) -> dict:\n    keywords = ['提取码', '取件码', '提取碼',\
+          \ '取件碼', 'extraction code', 'pickup code','凭']\n    if any(keyword in input_sms\
+          \ for keyword in keywords):\n        return {'result': input_sms}\n    return\
+          \ {'result': None}"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: true
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1735716404472'
+          - input_sms
+          variable: input_sms
+      height: 54
+      id: '1746344207889'
+      position:
+        x: 334
+        y: 263
+      positionAbsolute:
+        x: 334
+        y: 263
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: empty
+            id: 55789dc3-9fc3-4f23-97aa-fb58ef6be734
+            value: ''
+            varType: string
+            variable_selector:
+            - '1746344207889'
+            - result
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 126
+      id: '1746344735975'
+      position:
+        x: 638
+        y: 263
+      positionAbsolute:
+        x: 638
+        y: 263
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs: []
+        selected: false
+        title: empty output
+        type: end
+      height: 54
+      id: '1746344765852'
+      position:
+        x: 947.7142857142856
+        y: 296.4285714285714
+      positionAbsolute:
+        x: 947.7142857142856
+        y: 296.4285714285714
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 202.5478417702343
+      y: 66.73081113352168
+      zoom: 1.047431237661373
